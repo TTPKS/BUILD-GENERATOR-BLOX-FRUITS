@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blox Fruits Build Generator</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .container {
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            padding: 30px;
+            max-width: 600px;
+            width: 90%;
+        }
+        h1 {
+            color: #4a4a4a;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+        button {
+            display: block;
+            width: 100%;
+            background-color: #6c5ce7;
+            color: white;
+            padding: 15px;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 18px;
+            margin-top: 20px;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+        button:hover {
+            background-color: #5b4cc3;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        #result {
+            margin-top: 30px;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            opacity: 0;
+            transition: all 0.5s ease;
+        }
+        #result.show {
+            opacity: 1;
+        }
+        .build-item {
+            margin-bottom: 15px;
+            padding: 10px;
+            border-radius: 5px;
+            background-color: #f0f0f0;
+            transition: all 0.3s ease;
+        }
+        .build-item:hover {
+            transform: translateX(5px);
+            background-color: #e0e0e0;
+        }
+        .build-item strong {
+            color: #6c5ce7;
+        }
+        #save-builds {
+            margin-top: 20px;
+        }
+        #saved-builds {
+            margin-top: 30px;
+        }
+        .saved-build {
+            background-color: #f0f0f0;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Blox Fruits Build Generator</h1>
+        <div id="buildForm">
+            <button onclick="generateBuild()">Generate Random Build</button>
+        </div>
+
+        <div id="result"></div>
+
+        <div id="save-builds">
+            <button onclick="saveBuild()">Save This Build</button>
+        </div>
+
+        <div id="saved-builds">
+            <h2>Saved Builds</h2>
+        </div>
+    </div>
+
+    <script>
+        const combatStyles = [
+            "Shark Karate V2", "Electro V2", "Water Kung Fu", "Dragon Breath", 
+            "Superhuman", "Godhuman", "Death Step", "Sharkman Karate", 
+            "Electric Claw", "Dough King", "Tushita"
+        ];
+
+        const swords = [
+            "Buddy Sword", "Yama", "Hallow Scythe", "Canvander", "Shisui", 
+            "Wando", "Saddi", "Saber", "Rengoku", "Midnight Blade", "True Triple Katana"
+        ];
+
+        const guns = [
+            "Kabucha", "Soul Guitar", "Serpent Bow", "Acidum Rifle", "Bizarre Rifle",
+            "Bazooka", "Candy Cane", "Kabucha V2"
+        ];
+
+        const fruits = [
+            "Rumble", "Quake", "String", "Dark", "Light", "Magma", "Buddha", 
+            "Ice", "Sand", "Phoenix", "Dragon", "Control", "Venom", "Shadow", 
+            "Dough", "Gravity", "Paw", "Leopard"
+        ];
+
+        let currentBuild = {};
+
+        function getRandomItem(array) {
+            return array[Math.floor(Math.random() * array.length)];
+        }
+
+        function generateBuild() {
+            currentBuild = {
+                combat: getRandomItem(combatStyles),
+                sword: getRandomItem(swords),
+                gun: getRandomItem(guns),
+                fruit: getRandomItem(fruits)
+            };
+
+            let resultHTML = `<h2>Your Random Blox Fruits Build:</h2>`;
+            for (let [key, value] of Object.entries(currentBuild)) {
+                resultHTML += `<div class="build-item"><strong>${key.charAt(0).toUpperCase() + key.slice(1)}:</strong> ${value}</div>`;
+            }
+
+            const resultElement = document.getElementById('result');
+            resultElement.innerHTML = resultHTML;
+            resultElement.classList.remove('show');
+            setTimeout(() => resultElement.classList.add('show'), 50);
+        }
+
+        function saveBuild() {
+            if (Object.keys(currentBuild).length === 0) {
+                alert("Please generate a build first!");
+                return;
+            }
+
+            const savedBuildsElement = document.getElementById('saved-builds');
+            const buildElement = document.createElement('div');
+            buildElement.classList.add('saved-build');
+            
+            let buildHTML = '';
+            for (let [key, value] of Object.entries(currentBuild)) {
+                buildHTML += `<div><strong>${key.charAt(0).toUpperCase() + key.slice(1)}:</strong> ${value}</div>`;
+            }
+            
+            buildElement.innerHTML = buildHTML;
+            savedBuildsElement.appendChild(buildElement);
+        }
+    </script>
+</body>
+</html>
