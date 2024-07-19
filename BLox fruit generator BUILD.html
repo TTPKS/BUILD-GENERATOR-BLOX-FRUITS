@@ -57,7 +57,7 @@
             50% { transform: scale(1.05); }
             100% { transform: scale(1); }
         }
-        button {
+        button, select {
             display: block;
             width: 100%;
             background-color: #ff0000;
@@ -73,7 +73,7 @@
             position: relative;
             overflow: hidden;
         }
-        button::after {
+        button::after, select::after {
             content: '';
             position: absolute;
             top: -50%;
@@ -84,10 +84,10 @@
             transform: rotate(45deg);
             transition: all 0.3s ease;
         }
-        button:hover::after {
+        button:hover::after, select:hover::after {
             left: 100%;
         }
-        button:hover {
+        button:hover, select:hover {
             background-color: #cc0000;
             transform: translateY(-2px);
             box-shadow: 0 5px 15px rgba(255,0,0,0.4);
@@ -149,7 +149,11 @@
     <div class="container">
         <h1>Blox Fruits Build Generator</h1>
         <div id="buildForm">
-            <button onclick="generateBuild()">Generate Random Build</button>
+            <select id="fruitSelect">
+                <option value="">Random Fruit</option>
+                <!-- Fruit options will be added here dynamically -->
+            </select>
+            <button onclick="generateBuild()">Generate Build</button>
         </div>
 
         <div id="result"></div>
@@ -189,19 +193,30 @@
 
         let currentBuild = {};
 
+        // Populate fruit select options
+        const fruitSelect = document.getElementById('fruitSelect');
+        fruits.forEach(fruit => {
+            const option = document.createElement('option');
+            option.value = fruit;
+            option.textContent = fruit;
+            fruitSelect.appendChild(option);
+        });
+
         function getRandomItem(array) {
             return array[Math.floor(Math.random() * array.length)];
         }
 
         function generateBuild() {
+            const selectedFruit = fruitSelect.value;
+
             currentBuild = {
                 combat: getRandomItem(combatStyles),
                 sword: getRandomItem(swords),
                 gun: getRandomItem(guns),
-                fruit: getRandomItem(fruits)
+                fruit: selectedFruit || getRandomItem(fruits)
             };
 
-            let resultHTML = `<h2>Your Random Blox Fruits Build:</h2>`;
+            let resultHTML = `<h2>Your Blox Fruits Build:</h2>`;
             const resultElement = document.getElementById('result');
             resultElement.innerHTML = resultHTML;
             resultElement.classList.remove('show');
