@@ -11,33 +11,56 @@
             font-family: 'Poppins', sans-serif;
             margin: 0;
             padding: 0;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: #333;
+            background: #000;
+            color: #fff;
             min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
+            overflow-x: hidden;
         }
         .container {
-            background-color: rgba(255, 255, 255, 0.9);
+            background-color: rgba(30, 0, 0, 0.9);
             border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 0 30px rgba(255, 0, 0, 0.3);
             padding: 30px;
             max-width: 600px;
             width: 90%;
+            position: relative;
+            overflow: hidden;
+        }
+        .container::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: conic-gradient(from 0deg, transparent, #ff0000, transparent 30%);
+            animation: rotate 4s linear infinite;
+            z-index: -1;
+        }
+        @keyframes rotate {
+            100% { transform: rotate(360deg); }
         }
         h1 {
-            color: #4a4a4a;
+            color: #ff0000;
             text-align: center;
             margin-bottom: 30px;
             font-size: 2.5em;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+            text-shadow: 2px 2px 4px rgba(255,0,0,0.3);
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
         }
         button {
             display: block;
             width: 100%;
-            background-color: #6c5ce7;
-            color: white;
+            background-color: #ff0000;
+            color: #000;
             padding: 15px;
             border: none;
             border-radius: 50px;
@@ -46,37 +69,61 @@
             margin-top: 20px;
             transition: all 0.3s ease;
             font-weight: 600;
+            position: relative;
+            overflow: hidden;
+        }
+        button::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: rgba(255,255,255,0.2);
+            transform: rotate(45deg);
+            transition: all 0.3s ease;
+        }
+        button:hover::after {
+            left: 100%;
         }
         button:hover {
-            background-color: #5b4cc3;
+            background-color: #cc0000;
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            box-shadow: 0 5px 15px rgba(255,0,0,0.4);
         }
         #result {
             margin-top: 30px;
             padding: 20px;
-            background-color: #fff;
+            background-color: rgba(50, 0, 0, 0.8);
             border-radius: 10px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            box-shadow: 0 5px 15px rgba(255,0,0,0.2);
             opacity: 0;
             transition: all 0.5s ease;
+            transform: translateY(20px);
         }
         #result.show {
             opacity: 1;
+            transform: translateY(0);
         }
         .build-item {
             margin-bottom: 15px;
             padding: 10px;
             border-radius: 5px;
-            background-color: #f0f0f0;
+            background-color: rgba(80, 0, 0, 0.6);
             transition: all 0.3s ease;
+            transform: translateX(-20px);
+            opacity: 0;
+        }
+        .build-item.show {
+            transform: translateX(0);
+            opacity: 1;
         }
         .build-item:hover {
             transform: translateX(5px);
-            background-color: #e0e0e0;
+            background-color: rgba(100, 0, 0, 0.8);
         }
         .build-item strong {
-            color: #6c5ce7;
+            color: #ff0000;
         }
         #save-builds {
             margin-top: 20px;
@@ -85,10 +132,15 @@
             margin-top: 30px;
         }
         .saved-build {
-            background-color: #f0f0f0;
+            background-color: rgba(80, 0, 0, 0.6);
             padding: 10px;
             margin-bottom: 10px;
             border-radius: 5px;
+            animation: fadeIn 0.5s ease-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
     </style>
 </head>
@@ -118,7 +170,7 @@
         ];
 
         const swords = [
-"Cutlass", "Dual Katana", "Katana", "Iron Mace", "Shark Saw", "Triple Katana", "Twin Hooks", "Dragon Trident", "Pipe", "Soul Cane", "Trident", "Dual-Headed Blade",
+            "Cutlass", "Dual Katana", "Katana", "Iron Mace", "Shark Saw", "Triple Katana", "Twin Hooks", "Dragon Trident", "Pipe", "Soul Cane", "Trident", "Dual-Headed Blade",
             "Gravity Cane", "Jitte", "Longsword", "Bisento", "Midnight Blade", "Cavender", "Dark Dagger", "Pole (1st Form)", "Pole (2nd Form)", "Saber", "Shisui", "Wando",
             "Sadie", "Canvander", "Midori", "Soul Cane", "Dark Blade", "Hallow Scythe", "Tushita", "Yoru", "Cursed Dual Katana", "True Triple Katana"
         ];
@@ -149,14 +201,22 @@
             };
 
             let resultHTML = `<h2>Your Random Blox Fruits Build:</h2>`;
-            for (let [key, value] of Object.entries(currentBuild)) {
-                resultHTML += `<div class="build-item"><strong>${key.charAt(0).toUpperCase() + key.slice(1)}:</strong> ${value}</div>`;
-            }
-
             const resultElement = document.getElementById('result');
             resultElement.innerHTML = resultHTML;
             resultElement.classList.remove('show');
-            setTimeout(() => resultElement.classList.add('show'), 50);
+            
+            setTimeout(() => {
+                resultElement.classList.add('show');
+                Object.entries(currentBuild).forEach(([key, value], index) => {
+                    setTimeout(() => {
+                        const buildItem = document.createElement('div');
+                        buildItem.classList.add('build-item');
+                        buildItem.innerHTML = `<strong>${key.charAt(0).toUpperCase() + key.slice(1)}:</strong> ${value}`;
+                        resultElement.appendChild(buildItem);
+                        setTimeout(() => buildItem.classList.add('show'), 50);
+                    }, index * 200);
+                });
+            }, 50);
         }
 
         function saveBuild() {
